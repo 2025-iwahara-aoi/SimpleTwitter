@@ -140,8 +140,8 @@ public class UserService {
         Connection connection = null;
         try {
             connection = getConnection();
-            // パスワードが空か null の場合は、現在のパスワードをそのまま使う
-            if (user.getPassword() == null || StringUtils.isBlank(user.getPassword())) {
+            // パスワードが空白、スペース、改行 の場合は、現在のパスワードをそのまま使う
+            if (StringUtils.isBlank(user.getPassword())) {
                 User existingUser = new UserDao().select(connection, user.getId());
                 user.setPassword(existingUser.getPassword());
             } else {
