@@ -16,11 +16,16 @@ import chapter6.logging.InitApplication;
 
 public class MessageService {
 
+	/*投稿、新しいメッセージを保存する。
+	 * 投稿されたメッセージ一覧を取得する。
+	 * DBの切断も管理している。
+	 *
 
-    /**
     * ロガーインスタンスの生成
     */
     Logger log = Logger.getLogger("twitter");
+
+    //Logger ログを出すために使う、処理記録を出力
 
     /**
     * デフォルトコンストラクタ
@@ -34,16 +39,21 @@ public class MessageService {
 
     public void insert(Message message) {
 
+    	//insert()データベースに新しいデータを追加すること。
+
 	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-        Connection connection = null;
+        Connection connection = null;  //データベースとやり取りするための接続を用意
+
         try {
-            connection = getConnection();
-            new MessageDao().insert(connection, message);
-            commit(connection);
+            connection = getConnection();		//DBに接続
+            new MessageDao().insert(connection, message);	//投稿をDBに追加
+            //MessageDaoを使い、実際のSQL実行はDAOに任せている。
+
+            commit(connection);		//成功したら反映
         } catch (RuntimeException e) {
-            rollback(connection);
+            rollback(connection);	//失敗時は、取り消し
 		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
             throw e;
         } catch (Error e) {
@@ -51,23 +61,29 @@ public class MessageService {
 		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
             throw e;
         } finally {
-            close(connection);
+            close(connection);		//最後は必ず、接続を閉じる。
         }
     }
     public List<UserMessage> select() {
+    	//このメソッドはデータベースから取得して返すもの。
 
   	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
           " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
           final int LIMIT_NUM = 1000;
 
-          Connection connection = null;
+          Connection connection = null; //データベースに接続するための線を宣言。
+          						//まだつながっていない状態。
           try {
-              connection = getConnection();
+              connection = getConnection();  //データベースと接続
               List<UserMessage> messages = new UserMessageDao().select(connection, LIMIT_NUM);
-              commit(connection);
+              //UserMessageDaoクラスのselect()メソッドを呼んで、データベースから投稿一覧を取得している。
 
-              return messages;
+              commit(connection);	//今までの操作を確定保存している。
+
+              return messages;		//上で取得したList<UserMessage>を呼び出し元に返している。
+
+
           } catch (RuntimeException e) {
               rollback(connection);
   		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
