@@ -14,22 +14,22 @@
         <div class="main-contents">
             <div class="header">
 
-    <c:if test="${ empty loginUser }">
+    <c:if test="${ empty loginUser }">	 <%-- ログインしていない場合 --%>
         <a href="login">ログイン</a>
         <a href="signup">登録する</a>
     </c:if>
-    <c:if test="${ not empty loginUser }">
+    <c:if test="${ not empty loginUser }">  <%-- ログイン済みの場合 --%>
         <a href="./">ホーム</a>
         <a href="setting">設定</a>
         <a href="logout">ログアウト</a>
     </c:if>
 </div>
 
-	<c:if test="${ not empty loginUser }">
-    <div class="profile">
+	<c:if test="${ not empty loginUser }">		<%-- ログインユーザーが存在する場合 --%>
+    <div class="profile">										<%-- そのユーザーの名前、アカウント名 --%>
         <div class="name"><h2><c:out value="${loginUser.name}" /></h2></div>
         <div class="account">@<c:out value="${loginUser.account}" /></div>
-        <div class="description"><c:out value="${loginUser.description}" /></div>
+        <div class="description"><c:out value="${loginUser.description}" /></div>  <%-- 自己紹介文 --%>
     </div>
 </c:if>
 <c:if test="${ not empty errorMessages }">
@@ -56,8 +56,22 @@
 <div class="messages">
     <c:forEach items="${messages}" var="message">
         <div class="message">
-            <div class="account-name">
-                <span class="account"><c:out value="${message.account}" /></span>
+            <div class="account-name">		<%-- ユーザー名とアカウント名のセットを表示 --%>
+
+
+   <%--変更前   <span class="account"><c:out value="${message.account}" /></span>　--%>
+             <%-- アカウント名を表示させるだけで、クリックしても何も起こらない。 --%>
+
+             <span class="account">		<%-- クリック可能に --%>
+    <a href="./?user_id=<c:out value="${message.userId}"/>">
+    <%-- <a>タグで囲まれ、くりっくできるようにした --%>
+    <%-- サーバー側でuser_idに基づいてページを書き換えることができる --%>
+
+        <c:out value="${message.account}" />
+    </a>
+</span>
+
+
                 <span class="name"><c:out value="${message.name}" /></span>
             </div>
             <div class="text"><c:out value="${message.text}" /></div>

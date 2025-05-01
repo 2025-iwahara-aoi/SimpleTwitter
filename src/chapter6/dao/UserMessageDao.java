@@ -38,8 +38,14 @@ public class UserMessageDao {
         " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
         PreparedStatement ps = null;
+        /*これは、安全にSQLを送るための特別なオブジェクト?。
+         	psという名前で、その変数を用意している？*/
+
         try {
             StringBuilder sql = new StringBuilder();
+            //一つの文字列を何度も追加していくもの。
+            //なんでnewなんだ？？
+
             sql.append("SELECT ");
             sql.append("    messages.id as id, ");
             sql.append("    messages.text as text, ");
@@ -53,8 +59,17 @@ public class UserMessageDao {
             sql.append("ORDER BY created_date DESC limit " + num);
 
             ps = connection.prepareStatement(sql.toString());
+            /*					SQLはStringBulder型なため、toStringで普通の文字列にした？
+             * SQL文を実行可能な形に変えて、psにいれた。
+             */
 
             ResultSet rs = ps.executeQuery();
+
+            /*上で準備した、psを実行する。
+             * 実行結果をResultSetに代入する。
+             *
+             * ResultSet（rs）:rsを使って1行ずつ取り出せる。
+             */
 
             List<UserMessage> messages = toUserMessages(rs);
             return messages;
