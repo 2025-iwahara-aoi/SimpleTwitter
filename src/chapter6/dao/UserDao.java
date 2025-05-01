@@ -182,7 +182,17 @@ public class UserDao {
         	        sql.append("    account = ?, ");
         	        sql.append("    name = ?, ");
         	        sql.append("    email = ?, ");
-        	        sql.append("    password = ?, ");
+
+        	        //sql.append("    password = ?, "); 常にSQLに含まれる
+
+
+        	        boolean updatePassword = (user.getPassword() != null && !user.getPassword().isEmpty());
+        	        if (updatePassword) {
+        	            sql.append("    password = ?, ");
+        	        }
+
+
+
         	        sql.append("    description = ?, ");
         	        sql.append("    updated_date = CURRENT_TIMESTAMP ");
         	        sql.append("WHERE id = ?");
@@ -192,7 +202,18 @@ public class UserDao {
         	        ps.setString(1, user.getAccount());
         	        ps.setString(2, user.getName());
         	        ps.setString(3, user.getEmail());
-        	        ps.setString(4, user.getPassword());
+
+
+
+        	        //ps.setString(4, user.getPassword());　空でも実行される　上書きされる恐れがある
+
+        	        if (updatePassword) {
+        	            ps.setString(4, user.getPassword()); // ← パスワードがあるときだけ追加
+        	        }
+
+
+
+
         	        ps.setString(5, user.getDescription());
         	        ps.setInt(6, user.getId());
 
