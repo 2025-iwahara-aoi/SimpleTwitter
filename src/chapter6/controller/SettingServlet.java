@@ -118,16 +118,9 @@ public class SettingServlet extends HttpServlet {
         if (StringUtils.isEmpty(account)) {
             errorMessages.add("アカウント名を入力してください");
         }
-
-
-
-        if (!StringUtils.isEmpty(password) && password.length() < 6) {
-            errorMessages.add("パスワードは6文字以上で入力してください");
+        if (!StringUtils.isBlank(password) && password.length() < 3) {
+            errorMessages.add("パスワードは3文字以上で入力してください");
         }
-
-
-
-
         if (!StringUtils.isEmpty(email) && (50 < email.length())) {
             errorMessages.add("メールアドレスは50文字以下で入力してください");
         }

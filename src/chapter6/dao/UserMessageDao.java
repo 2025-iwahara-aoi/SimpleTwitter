@@ -72,6 +72,11 @@ public class UserMessageDao {
              */
 
             List<UserMessage> messages = toUserMessages(rs);
+            
+            /*rsに入っているデータベース検索結果を、
+             * toUserMessages（rs）というメソッドで、
+             */
+            
             return messages;
         } catch (SQLException e) {
 		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);

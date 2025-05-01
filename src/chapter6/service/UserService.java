@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import chapter6.beans.User;
 import chapter6.dao.UserDao;
 import chapter6.logging.InitApplication;
@@ -14,7 +16,7 @@ import chapter6.utils.CipherUtil;
 
 public class UserService {
 
-	
+
 	//DAOを使ってデータベースとのやり取りを担っている
 	//パスワードの暗号化処理
 	//トランザクション制御
@@ -50,14 +52,14 @@ public class UserService {
 
             connection = getConnection();
             new UserDao().insert(connection, user);
-            
+
             //DBコネクションを取得し、DAOでインサートを実行
-            
+
             commit(connection);  //正常時コミット。
         } catch (RuntimeException e) {
             rollback(connection);  //異常時ロールバック。
-            
-            
+
+
 		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
             throw e;
         } catch (Error e) {
@@ -68,11 +70,11 @@ public class UserService {
             close(connection);   //最後にクラス。
         }
     }
-    
+
     public User select(String accountOrEmail, String password) {
-    	
+
     	//ログインの認証。パスワードを暗号化。
-    	
+
   	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
           " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
@@ -84,7 +86,7 @@ public class UserService {
               connection = getConnection();
               User user = new UserDao().select(connection, accountOrEmail, encPassword);
               commit(connection);
-              
+
               //結果があれば、Userを返却
 
               return user;
@@ -102,7 +104,7 @@ public class UserService {
       }
 
     public User select(int userId) {
-    	
+
     	//ユーザーのIDからユーザー情報を取得するメソッド
     	//ログイン後プロフィール画面などで利用されるケースが多い
 
@@ -128,7 +130,7 @@ public class UserService {
             close(connection);
         }
     }
-    
+
     public void update(User user) {
     	//パスワードを再暗号化　ここをいじれば変更せず送れる。
 
@@ -138,13 +140,8 @@ public class UserService {
         Connection connection = null;
         try {
             connection = getConnection();
-            
-            
-            
-            
-
             // パスワードが空か null の場合は、現在のパスワードをそのまま使う
-            if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            if (user.getPassword() == null || StringUtils.isBlank(user.getPassword())) {
                 User existingUser = new UserDao().select(connection, user.getId());
                 user.setPassword(existingUser.getPassword());
             } else {
@@ -152,9 +149,6 @@ public class UserService {
                 String encPassword = CipherUtil.encrypt(user.getPassword());
                 user.setPassword(encPassword);
             }
-            
-            
-
             new UserDao().update(connection, user);
             commit(connection);
         } catch (RuntimeException e) {
