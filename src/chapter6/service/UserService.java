@@ -141,12 +141,8 @@ public class UserService {
         try {
             connection = getConnection();
             // パスワードが空白、スペース、改行 の場合は、現在のパスワードをそのまま使う
-            if (StringUtils.isBlank(user.getPassword())) {
-                User existingUser = new UserDao().select(connection, user.getId());
-                user.setPassword(existingUser.getPassword());
-            } else {
-                // 入力がある場合のみ暗号化して更新
-                String encPassword = CipherUtil.encrypt(user.getPassword());
+            if (!StringUtils.isBlank(user.getPassword())) {
+            	String encPassword = CipherUtil.encrypt(user.getPassword());
                 user.setPassword(encPassword);
             }
             new UserDao().update(connection, user);
