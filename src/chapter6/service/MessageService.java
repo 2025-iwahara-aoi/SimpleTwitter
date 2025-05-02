@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
+
 import chapter6.beans.Message;
 import chapter6.beans.UserMessage;
 import chapter6.dao.MessageDao;
@@ -21,79 +23,94 @@ public class MessageService {
 	 * DBの切断も管理している。
 	 *
 
-    * ロガーインスタンスの生成
-    */
-    Logger log = Logger.getLogger("twitter");
+	* ロガーインスタンスの生成
+	*/
+	Logger log = Logger.getLogger("twitter");
 
-    //Logger ログを出すために使う、処理記録を出力
+	//Logger ログを出すために使う、処理記録を出力
 
-    /**
-    * デフォルトコンストラクタ
-    * アプリケーションの初期化を実施する。
-    */
-    public MessageService() {
-        InitApplication application = InitApplication.getInstance();
-        application.init();
+	/**
+	* デフォルトコンストラクタ
+	* アプリケーションの初期化を実施する。
+	*/
+	public MessageService() {
+		InitApplication application = InitApplication.getInstance();
+		application.init();
 
-    }
+	}
 
-    public void insert(Message message) {
+	public void insert(Message message) {
 
-    	//insert()データベースに新しいデータを追加すること。
+		//insert()データベースに新しいデータを追加すること。
 
-	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
-        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+		          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-        Connection connection = null;  //データベースとやり取りするための接続を用意
+		Connection connection = null; //データベースとやり取りするための接続を用意
 
-        try {
-            connection = getConnection();		//DBに接続
-            new MessageDao().insert(connection, message);	//投稿をDBに追加
-            //MessageDaoを使い、実際のSQL実行はDAOに任せている。
+		try {
+			connection = getConnection(); //DBに接続
+			new MessageDao().insert(connection, message); //投稿をDBに追加
+			//MessageDaoを使い、実際のSQL実行はDAOに任せている。
 
-            commit(connection);		//成功したら反映
-        } catch (RuntimeException e) {
-            rollback(connection);	//失敗時は、取り消し
-		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
-            throw e;
-        } catch (Error e) {
-            rollback(connection);
-		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
-            throw e;
-        } finally {
-            close(connection);		//最後は必ず、接続を閉じる。
-        }
-    }
-    public List<UserMessage> select() {
-    	//このメソッドはデータベースから取得して返すもの。
+			commit(connection); //成功したら反映
+		} catch (RuntimeException e) {
+			rollback(connection); //失敗時は、取り消し
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} finally {
+			close(connection); //最後は必ず、接続を閉じる。
+		}
+	}
 
-  	  log.info(new Object(){}.getClass().getEnclosingClass().getName() +
-          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+	/*
+	 * selectの引数にString型のuserIdを追加
+	 */
+	public List<UserMessage> select(String userId) { //このメソッドはデータベースから取得して返すもの。
 
-          final int LIMIT_NUM = 1000;
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-          Connection connection = null; //データベースに接続するための線を宣言。
-          						//まだつながっていない状態。
-          try {
-              connection = getConnection();  //データベースと接続
-              List<UserMessage> messages = new UserMessageDao().select(connection, LIMIT_NUM);
-              //UserMessageDaoクラスのselect()メソッドを呼んで、データベースから投稿一覧を取得している。
+		final int LIMIT_NUM = 1000;
 
-              commit(connection);	//今までの操作を確定保存している。
+		Connection connection = null; //データベースに接続するための線を宣言。
+										//まだつながっていない状態。
+		try {
+			connection = getConnection(); //データベースと接続
+			/*
+			 * idをnullで初期化
+			 * ServletからuserIdの値が渡ってきていたら
+			 * 整数型に型変換し、idに代入
+			 */
+			Integer id = null;
+			if (!StringUtils.isEmpty(userId)) { //userId == null || userId.trim().isEmpty()
+				id = Integer.parseInt(userId);
+			}
+			List<UserMessage> messages = new UserMessageDao().select(connection, id, LIMIT_NUM);
+			//UserMessageDaoクラスのselect()メソッドを呼んで、データベースから投稿一覧を取得している。
 
-              return messages;		//上で取得したList<UserMessage>を呼び出し元に返している。
+			commit(connection); //今までの操作を確定保存している。
 
+			return messages; //上で取得したList<UserMessage>を呼び出し元に返している。
 
-          } catch (RuntimeException e) {
-              rollback(connection);
-  		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
-              throw e;
-          } catch (Error e) {
-              rollback(connection);
-  		log.log(Level.SEVERE, new Object(){}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
-              throw e;
-          } finally {
-              close(connection);
-          }
-      }
-  }
+		} catch (RuntimeException e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} finally {
+			close(connection);
+		}
+	}
+}

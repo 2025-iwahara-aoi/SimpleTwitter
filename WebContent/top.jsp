@@ -58,16 +58,11 @@
         <div class="message">
             <div class="account-name">		<%-- ユーザー名とアカウント名のセットを表示 --%>
 
-
-   <%--変更前   <span class="account"><c:out value="${message.account}" /></span>　--%>
-             <%-- アカウント名を表示させるだけで、クリックしても何も起こらない。 --%>
-
              <span class="account">		<%-- クリック可能に --%>
     <a href="./?user_id=<c:out value="${message.userId}"/>">
     <%-- <a>タグで囲まれ、くりっくできるようにした --%>
     <%-- サーバー側でuser_idに基づいてページを書き換えることができる --%>
-
-        <c:out value="${message.account}" />
+		<c:out value="${message.account}" />
     </a>
 </span>
 
