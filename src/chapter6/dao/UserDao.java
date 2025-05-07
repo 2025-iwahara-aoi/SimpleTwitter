@@ -115,6 +115,39 @@ public class UserDao {
 			close(ps);
 		}
 	}
+	/*
+	 * String型のaccountを引数にもつ、selectメソッドを追加する
+	 */
+	public User select(Connection connection, String account) {
+
+	    PreparedStatement ps = null;
+	    try {
+	        String sql = "SELECT * FROM users WHERE account = ?";
+	        //Useテーブルから指定されたアカウントに一致するユーザーを検索
+
+	        ps = connection.prepareStatement(sql);
+	        ps.setString(1, account);	//？に入れる値
+
+	        ResultSet rs = ps.executeQuery();
+	        //データベースから結果を取得
+
+	        List<User> users = toUsers(rs);
+	        //ResultSetからデータを取り出し、Userのリストに変換するメソッド
+	        //UserにマッピングしそれをList<User>として返す
+
+	        if (users.isEmpty()) {	//ユーザーが存在しない場合nullを返す。
+	            return null;
+	        } else if (2 <= users.size()) {
+	            throw new IllegalStateException("ユーザーが重複しています");
+	        } else {
+	            return users.get(0);
+	        }
+	    } catch (SQLException e) {
+	        throw new SQLRuntimeException(e);
+	    } finally {
+	        close(ps);
+	    }
+	}
 
 	private List<User> toUsers(ResultSet rs) throws SQLException {
 

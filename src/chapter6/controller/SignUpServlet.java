@@ -55,6 +55,7 @@ public class SignUpServlet extends HttpServlet {
 		List<String> errorMessages = new ArrayList<String>();
 
 		User user = getUser(request);
+
 		if (!isValid(user, errorMessages)) {
 			request.setAttribute("errorMessages", errorMessages);
 			request.getRequestDispatcher("signup.jsp").forward(request, response);
@@ -88,6 +89,9 @@ public class SignUpServlet extends HttpServlet {
 		String password = user.getPassword();
 		String email = user.getEmail();
 
+		if (StringUtils.EMPTY!=(account)) {
+			errorMessages.add("すでに存在するアカウントです");
+		}
 		if (!StringUtils.isEmpty(name) && (20 < name.length())) {
 			errorMessages.add("名前は20文字以下で入力してください");
 		}
