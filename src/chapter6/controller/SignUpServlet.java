@@ -89,9 +89,9 @@ public class SignUpServlet extends HttpServlet {
 		String password = user.getPassword();
 		String email = user.getEmail();
 
-		User select = new UserService().select(account);
+		User duplicateUser = new UserService().select(account);
 
-		if (select != null) {
+		if (duplicateUser != null) {
 	        errorMessages.add("すでに存在するアカウントです");
 	    }
 		if (!StringUtils.isEmpty(name) && (20 < name.length())) {

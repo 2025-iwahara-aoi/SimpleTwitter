@@ -110,9 +110,9 @@ public class SettingServlet extends HttpServlet {
 		String account = user.getAccount();
 		String email = user.getEmail();
 
-		User select = new UserService().select(account);
+		User duplicateUser = new UserService().select(account);
 
-		if (select != null && select.getId() != user.getId()) {
+		if (duplicateUser != null && duplicateUser.getId() != user.getId()) {
 		    errorMessages.add("すでに存在するアカウントです");
 		}
 		if (!StringUtils.isEmpty(name) && (20 < name.length())) {
