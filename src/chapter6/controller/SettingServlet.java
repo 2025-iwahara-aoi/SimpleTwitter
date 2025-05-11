@@ -44,12 +44,12 @@ public class SettingServlet extends HttpServlet {
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(); //DBでとってきた情報を
 		User loginUser = (User) session.getAttribute("loginUser");
 
 		User user = new UserService().select(loginUser.getId());
 
-		request.setAttribute("user", user);
+		request.setAttribute("user", user);  //リクエストとしてセットして、JSPで表示させる指示
 		request.getRequestDispatcher("setting.jsp").forward(request, response);
 	}
 
@@ -60,7 +60,9 @@ public class SettingServlet extends HttpServlet {
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
+		//セッションを取得している
 		HttpSession session = request.getSession();
+
 		List<String> errorMessages = new ArrayList<String>();
 
 		User user = getUser(request);
@@ -72,7 +74,7 @@ public class SettingServlet extends HttpServlet {
 				errorMessages.add("他の人によって更新されています。最新のデータを表示しました。データを確認してください。");
 			}
 		}
-
+		//エラーがあったら、エラーメッセージを持って戻る。
 		if (errorMessages.size() != 0) {
 			request.setAttribute("errorMessages", errorMessages);
 			request.setAttribute("user", user);
@@ -88,7 +90,7 @@ public class SettingServlet extends HttpServlet {
 
 		 log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 			        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
-
+		 //空のユーザーの箱をuserに入れている
 		User user = new User();
 		user.setId(Integer.parseInt(request.getParameter("id")));
 		user.setName(request.getParameter("name"));
@@ -98,6 +100,7 @@ public class SettingServlet extends HttpServlet {
 		}
 		user.setEmail(request.getParameter("email"));
 		user.setDescription(request.getParameter("description"));
+		//userを返している
 		return user;
 	}
 

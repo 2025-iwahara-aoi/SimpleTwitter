@@ -135,7 +135,7 @@ public class UserDao {
 	        //ResultSetからデータを取り出し、Userのリストに変換するメソッド
 	        //UserにマッピングしそれをList<User>として返す
 
-	        if (users.isEmpty()) {	//ユーザーが存在しない場合nullを返す。
+	        if (users.isEmpty()) {	//ユーザーが存在しない場合null返す
 	            return null;
 	        } else if (2 <= users.size()) {
 	            throw new IllegalStateException("ユーザーが重複しています");

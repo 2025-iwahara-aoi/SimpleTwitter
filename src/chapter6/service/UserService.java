@@ -106,21 +106,21 @@ public class UserService {
 
 	public User select(String account) {
 
-	    Connection connection = null;
-	    try {
-	        connection = getConnection();
-	        User user = new UserDao().select(connection, account);
-	        commit(connection);
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			User user = new UserDao().select(connection, account);
+			commit(connection);
 
-	        return user;
-	    } catch (RuntimeException e) {
-	        rollback(connection);
-	        throw e;
-	    } catch (Error e) {
-	        rollback(connection);
-	        throw e;
-	    } finally {
-	        close(connection);
+			return user;
+			} catch (RuntimeException e) {
+				rollback(connection);
+				throw e;
+			} catch (Error e) {
+				rollback(connection);
+				throw e;
+			} finally {
+				close(connection);
 	    }
 	}
 
@@ -157,7 +157,7 @@ public class UserService {
 	public void update(User user) {    //パスワードを再暗号化　ここをいじれば変更せず送れる。
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
-		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+				" : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		Connection connection = null;
 		try {

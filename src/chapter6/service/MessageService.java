@@ -69,6 +69,63 @@ public class MessageService {
 		}
 	}
 
+	public void deleteMessage(Connection connection, int messageId) {
+
+		//insert()データベースに新しいデータを追加すること。
+
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+		          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+		try {
+			connection = getConnection(); //DBに接続
+			new MessageDao().deleteMessage(connection, messageId); //投稿をDBに追加
+			//MessageDaoを使い、実際のSQL実行はDAOに任せている。
+
+			commit(connection); //成功したら反映
+		} catch (RuntimeException e) {
+			rollback(connection); //失敗時は、取り消し
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} finally {
+			close(connection); //最後は必ず、接続を閉じる。
+		}
+	}
+
+	public void updateMessage(Connection connection, int messageId, String newText) {
+
+		//insert()データベースに新しいデータを追加すること。
+
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+		          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+		try {
+			connection = getConnection(); //DBに接続
+			new MessageDao().updateMessage(connection,messageId,newText); //投稿をDBに追加
+			//MessageDaoを使い、実際のSQL実行はDAOに任せている。
+
+			commit(connection); //成功したら反映
+		} catch (RuntimeException e) {
+			rollback(connection); //失敗時は、取り消し
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+		} finally {
+			close(connection); //最後は必ず、接続を閉じる。
+		}
+	}
+
+
 	/*
 	 * selectの引数にString型のuserIdを追加
 	 */
@@ -89,7 +146,7 @@ public class MessageService {
 			 * 整数型に型変換し、idに代入
 			 */
 			Integer id = null;
-			if (!StringUtils.isEmpty(userId)) { //userId == null || userId.trim().isEmpty()
+			if (!StringUtils.isEmpty(userId)) {
 				id = Integer.parseInt(userId);
 			}
 			List<UserMessage> messages = new UserMessageDao().select(connection, id, LIMIT_NUM);
@@ -113,4 +170,36 @@ public class MessageService {
 			close(connection);
 		}
 	}
+
+	public UserMessage getMessage(Connection connection, int messageId) {
+
+		//insert()データベースに新しいデータを追加すること。
+
+		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+		          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+		try {
+			UserMessage message = new MessageDao().getMessage(connection,messageId); //投稿をDBに追加
+			//MessageDaoを使い、実際のSQL実行はDAOに任せている。
+
+			commit(connection); //成功したら反映
+			return message;     // 呼び出し元に返す
+
+		} catch (RuntimeException e) {
+			rollback(connection); //失敗時は、取り消し
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+
+			throw e;
+		} catch (Error e) {
+			rollback(connection);
+			log.log(Level.SEVERE, new Object() {
+			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
+			throw e;
+
+		} finally {
+			close(connection); //最後は必ず、接続を閉じる。
+		}
+	}
+
 }
