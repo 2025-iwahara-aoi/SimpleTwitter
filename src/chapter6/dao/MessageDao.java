@@ -67,7 +67,7 @@ public class MessageDao {
 		}
 	}
 
-	public void deleteMessage(Connection connection, int messageId) {
+	public void delete(Connection connection, int messageId) {
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
@@ -86,7 +86,7 @@ public class MessageDao {
 		}
 	}
 
-	public void updateMessage(Connection connection, Message message) {
+	public void update(Connection connection, Message message) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -105,7 +105,7 @@ public class MessageDao {
 		}
 	}
 
-	public Message getMessage(Connection connection, int messageId) {
+	public Message select(Connection connection, int messageId) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());

@@ -69,7 +69,7 @@ public class MessageService {
 		}
 	}
 
-	public void deleteMessage(Connection connection, int messageId) {
+	public void delete(Connection connection, int messageId) {
 
 		//insert()データベースに新しいデータを追加すること。
 
@@ -78,7 +78,7 @@ public class MessageService {
 
 		try {
 			connection = getConnection(); //DBに接続
-			new MessageDao().deleteMessage(connection, messageId); //投稿をDBに追加
+			new MessageDao().delete(connection, messageId); //投稿をDBに追加
 			//MessageDaoを使い、実際のSQL実行はDAOに任せている。
 
 			commit(connection); //成功したら反映
@@ -97,14 +97,14 @@ public class MessageService {
 		}
 	}
 
-	public void updateMessage(Message message) {
+	public void update(Message message) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 		Connection connection = getConnection(); //DBに接続
 
 		try {
-			new MessageDao().updateMessage(connection,message); //投稿をDBに追加
+			new MessageDao().update(connection,message); //投稿をDBに追加
 			//MessageDaoを使い、実際のSQL実行はDAOに任せている。
 
 			commit(connection); //成功したら反映
@@ -169,7 +169,7 @@ public class MessageService {
 		}
 	}
 
-	public Message message(int messageId) {
+	public Message select(int messageId) {
 
 		//insert()データベースに新しいデータを追加すること。
 
@@ -177,7 +177,7 @@ public class MessageService {
 		          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 			Connection connection = getConnection();
 		try {
-			Message message = new MessageDao().getMessage(connection,messageId); //投稿をDBに追加
+			Message message = new MessageDao().select(connection,messageId); //投稿をDBに追加
 			//MessageDaoを使い、実際のSQL実行はDAOに任せている。
 
 			commit(connection); //成功したら反映

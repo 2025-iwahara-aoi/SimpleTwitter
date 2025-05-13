@@ -38,7 +38,7 @@ public class DeleteMessageServlet extends HttpServlet {
 
 		Connection connection = getConnection();
 		int messageId = Integer.parseInt(request.getParameter("messageId"));
-		new MessageService().deleteMessage(connection, messageId);
+		new MessageService().delete(connection, messageId);
 		response.sendRedirect("./");
 	}
 
