@@ -97,15 +97,15 @@ public class MessageService {
 		}
 	}
 
-	public void updateMessage(Connection connection, int messageId, String newText) {
+	public void updateMessage(int messageId, String newText) {
 
 		//insert()データベースに新しいデータを追加すること。
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+		Connection connection = getConnection(); //DBに接続
 
 		try {
-			connection = getConnection(); //DBに接続
 			new MessageDao().updateMessage(connection,messageId,newText); //投稿をDBに追加
 			//MessageDaoを使い、実際のSQL実行はDAOに任せている。
 
@@ -171,13 +171,13 @@ public class MessageService {
 		}
 	}
 
-	public UserMessage getMessage(Connection connection, int messageId) {
+	public UserMessage getMessage(int messageId) {
 
 		//insert()データベースに新しいデータを追加すること。
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		          " : " + new Object(){}.getClass().getEnclosingMethod().getName());
-
+			Connection connection = getConnection();
 		try {
 			UserMessage message = new MessageDao().getMessage(connection,messageId); //投稿をDBに追加
 			//MessageDaoを使い、実際のSQL実行はDAOに任せている。

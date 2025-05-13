@@ -1,9 +1,6 @@
 package chapter6.controller;
 
-import static chapter6.utils.DBUtil.*;
-
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -13,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -50,39 +48,30 @@ public class EditServlet extends HttpServlet {
 			log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 			        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
+			HttpSession session = request.getSession();
+			//エラーメッセージをIistという箱で用意する。何回も使えるから。
+			List<String> errorMessages = new ArrayList<String>();
 			String messageIdParam = request.getParameter("messageId");
-			//Idがない場合。
-			if(messageIdParam == null || messageIdParam.isEmpty()) {
-				request.setAttribute("errorParam", "不正なパラメーターが入力されました");
-				request.getRequestDispatcher("/top.jsp").forward(request, response);
-				return;
+
+			UserMessage message = null;
+				//数値だけ入ったときここに入る。
+			if(!StringUtils.isBlank(messageIdParam) && messageIdParam.matches("[0-9]+$") ){
+				//上で定義しなくてもここで定義することで、int型にできる。
+				int messageId = Integer.parseInt(messageIdParam);
+				message = new MessageService().getMessage(messageId);
+
 			}
-
-			int messageId;
-
-			//try-catchで存在しているのが数字じゃない場合の処理。
-			try {
-				messageId = Integer.parseInt(messageIdParam);
-			// messageIdが数値でない場合の処理
-			}catch(NumberFormatException e){
-				request.setAttribute("errorParam", "不正なパラメーターが入力されました");
-				request.getRequestDispatcher("/top.jsp").forward(request, response);
+			if(message == null) {
+				errorMessages.add("不正なパラメーターが入力されました");
+				session.setAttribute("errorMessages", errorMessages);
+				response.sendRedirect("./");
 				return;
-			}
-				//ここでデータベースと接続して、有効なIdか確かめて出力させる。
-				Connection connection = getConnection();
-				UserMessage message = new MessageService().getMessage(connection,messageId);
-
-				if(message == null) {
-					request.setAttribute("errorParam", "不正なパラメーターが入力されました");
-					request.getRequestDispatcher("/top.jsp").forward(request, response);
-					return;
-				}
-				// 取得した内容を JSP に渡す
+			}else {
 				request.setAttribute("message", message);
-				// 編集ページへ転送
 				request.getRequestDispatcher("/edit.jsp").forward(request, response);
 			}
+
+		}
 
 		@Override
 	    protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -97,8 +86,7 @@ public class EditServlet extends HttpServlet {
 
 			if (isValid(message, errorMessages)) {
 				try {
-					Connection connection = getConnection();
-		            new MessageService().updateMessage(connection, message.getId(), message.getText());
+		            new MessageService().updateMessage(message.getId(), message.getText());
 
 				} catch (NoRowsUpdatedRuntimeException e) {
 					log.warning("他の人によって更新されています。最新のデータを表示しました。データを確認してください。");

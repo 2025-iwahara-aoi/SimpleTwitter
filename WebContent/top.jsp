@@ -57,17 +57,6 @@
 			<c:remove var="errorMessages" scope="session" />
 		</c:if>
 
-		<c:if test="${ not empty errorParam }">
-			<div class="errorParam">
-				<ul>
-					<c:forEach items="${errorParam}" var="errorParam">
-						<li><c:out value="${errorParam}" />
-					</c:forEach>
-				</ul>
-			</div>
-			<c:remove var="errorMessages" scope="session" />
-		</c:if>
-
 
 		<div class="form-area">
 			<c:if test="${ isShowMessageForm }">
