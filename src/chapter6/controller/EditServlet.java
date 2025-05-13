@@ -58,7 +58,7 @@ public class EditServlet extends HttpServlet {
 				//int型に変換できるのはmessageIdParam変数の中身が数字だけで構成されていると
 				//if条件分岐で担保されているから。
 				int messageId = Integer.parseInt(messageIdParam);
-				message = new MessageService().Message(messageId);
+				message = new MessageService().message(messageId);
 
 			}
 			if(message == null) {
@@ -86,7 +86,7 @@ public class EditServlet extends HttpServlet {
 
 			if (isValid(message, errorMessages)) {
 				try {
-		            new MessageService().updateMessage(message.getId(), message.getText());
+		            new MessageService().updateMessage(message);
 
 				} catch (NoRowsUpdatedRuntimeException e) {
 					log.warning("他の人によって更新されています。最新のデータを表示しました。データを確認してください。");

@@ -86,7 +86,7 @@ public class MessageDao {
 		}
 	}
 
-	public void updateMessage(Connection connection, int messageId, String newText) {
+	public void updateMessage(Connection connection, Message message) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -95,8 +95,8 @@ public class MessageDao {
 		try {
 			String sql = "UPDATE messages SET text = ?, updated_date = CURRENT_TIMESTAMP WHERE id = ?";
 			ps = connection.prepareStatement(sql);
-			ps.setString(1, newText);
-			ps.setInt(2, messageId);
+			ps.setString(1, message.getText());
+			ps.setInt(2, message.getId());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw new SQLRuntimeException(e);
@@ -105,7 +105,7 @@ public class MessageDao {
 		}
 	}
 
-	public Message Message(Connection connection, int messageId) {
+	public Message getMessage(Connection connection, int messageId) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
