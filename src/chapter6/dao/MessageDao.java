@@ -6,11 +6,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import chapter6.beans.Message;
-import chapter6.beans.UserMessage;
 import chapter6.exception.SQLRuntimeException;
 import chapter6.logging.InitApplication;
 
@@ -104,45 +105,58 @@ public class MessageDao {
 		}
 	}
 
-	public UserMessage getMessage(Connection connection, int messageId) {
+	public Message Message(Connection connection, int messageId) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		PreparedStatement ps = null;
-		ResultSet rs = null;
 
 		try {
-			String sql = "SELECT messages.id, messages.user_id, messages.text, messages.created_date, " +
-					"users.name, users.account " +
+			String sql = "SELECT messages.id, messages.user_id, messages.text, messages.created_date " +
 					"FROM messages " +
-					"LEFT JOIN users ON messages.user_id = users.id " +
 					"WHERE messages.id = ?";
 
 			ps = connection.prepareStatement(sql);
 			ps.setInt(1, messageId);
-			rs = ps.executeQuery();
 
-			if (rs.next()) {
-				UserMessage message = new UserMessage();
-				message.setId(rs.getInt("id"));
-				message.setUserId(rs.getInt("user_id"));
-				message.setText(rs.getString("text"));
-				message.setCreatedDate(rs.getTimestamp("created_date"));
-				message.setName(rs.getString("name"));
-				message.setAccount(rs.getString("account"));
-				return message;
+			ResultSet rs = ps.executeQuery();
+
+			List<Message> messages = toMessages(rs);
+			if (messages.isEmpty()) {
+				return null;
 			} else {
-				return null; // 見つからない場合
+				return messages.get(0);
 			}
 		} catch (SQLException e) {
 			log.log(Level.SEVERE, new Object() {
 			}.getClass().getEnclosingClass().getName() + " : " + e.toString(), e);
 			throw new SQLRuntimeException(e);
 		} finally {
-			close(rs);
 			close(ps);
 		}
 	}
+	private List<Message> toMessages(ResultSet rs) throws SQLException {
 
+			log.info(new Object(){}.getClass().getEnclosingClass().getName() +
+		              " : " + new Object(){}.getClass().getEnclosingMethod().getName());
+
+				List<Message> messages = new ArrayList<>();
+				try {
+					while(rs.next()) {
+					Message message = new Message();
+					message.setId(rs.getInt("id"));
+					message.setUserId(rs.getInt("user_id"));
+					message.setText(rs.getString("text"));
+					message.setCreatedDate(rs.getTimestamp("created_date"));
+
+					messages.add(message);
+
+				}
+				return messages;
+			}finally {
+				close(rs);
+
+			}
+		}
 }

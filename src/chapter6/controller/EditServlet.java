@@ -15,7 +15,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 
 import chapter6.beans.Message;
-import chapter6.beans.UserMessage;
 import chapter6.exception.NoRowsUpdatedRuntimeException;
 import chapter6.logging.InitApplication;
 import chapter6.service.MessageService;
@@ -53,12 +52,13 @@ public class EditServlet extends HttpServlet {
 			List<String> errorMessages = new ArrayList<String>();
 			String messageIdParam = request.getParameter("messageId");
 
-			UserMessage message = null;
+			Message message = null;
 				//数値だけ入ったときここに入る。
 			if(!StringUtils.isBlank(messageIdParam) && messageIdParam.matches("[0-9]+$") ){
-				//上で定義しなくてもここで定義することで、int型にできる。
+				//int型に変換できるのはmessageIdParam変数の中身が数字だけで構成されていると
+				//if条件分岐で担保されているから。
 				int messageId = Integer.parseInt(messageIdParam);
-				message = new MessageService().getMessage(messageId);
+				message = new MessageService().Message(messageId);
 
 			}
 			if(message == null) {
