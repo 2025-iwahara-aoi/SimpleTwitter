@@ -127,13 +127,12 @@ public class MessageService {
 	/*
 	 * selectの引数にString型のuserIdを追加
 	 */
-	public List<UserMessage> select(String userId) { //このメソッドはデータベースから取得して返すもの。
+	public List<UserMessage> select(String userId, String startDate, String endDate) { //このメソッドはデータベースから取得して返すもの。
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 
 		final int LIMIT_NUM = 1000;
-
 		Connection connection = null; //データベースに接続するための線を宣言。
 										//まだつながっていない状態。
 		try {
@@ -147,7 +146,19 @@ public class MessageService {
 			if (!StringUtils.isEmpty(userId)) {
 				id = Integer.parseInt(userId);
 			}
-			List<UserMessage> messages = new UserMessageDao().select(connection, id, LIMIT_NUM);
+
+			if (!StringUtils.isBlank(startDate)) {
+				startDate = (startDate + " 00:00:00");
+			}else {
+				startDate = "2020-01-01 00:00:00";
+			}
+			if (!StringUtils.isBlank(endDate)) {
+				endDate = (endDate+ " 23:59:59");
+			}else {
+				endDate = "2026-01-01 23:59:59";
+			}
+
+			List<UserMessage> messages = new UserMessageDao().select(connection, id, startDate, endDate, LIMIT_NUM);
 			//UserMessageDaoクラスのselect()メソッドを呼んで、データベースから投稿一覧を取得している。
 
 			commit(connection); //今までの操作を確定保存している。

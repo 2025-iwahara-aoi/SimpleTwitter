@@ -32,7 +32,7 @@ public class UserMessageDao {
 
 	}
 
-	public List<UserMessage> select(Connection connection, Integer userId, int num) {
+	public List<UserMessage> select(Connection connection, Integer userId, String startDate, String endDate, int num) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -44,8 +44,6 @@ public class UserMessageDao {
 		try {
 			StringBuilder sql = new StringBuilder();
 			//一つの文字列を何度も追加していくもの。
-			//なんでnewなんだ？？
-
 			sql.append("SELECT ");
 			sql.append("    messages.id as id, ");
 			sql.append("    messages.text as text, ");
@@ -57,17 +55,20 @@ public class UserMessageDao {
 			sql.append("INNER JOIN users ");
 			//テーブルを結合して、messageとuserをセットで取得できるようなる
 			sql.append("ON messages.user_id = users.id ");
+			sql.append("WHERE messages.created_date BETWEEN ? AND ?  ");
+
 			if (userId != null) { //	userIdが渡されている時だけ
-				sql.append("WHERE messages.user_id = ? ");
+				sql.append("AND messages.user_id = ? ");
 			}
 			sql.append("ORDER BY created_date DESC limit " + num);
 
 			ps = connection.prepareStatement(sql.toString());
-			/*	SQLはStringBulder型なため、toStringで普通の文字列にした？
-			 *	SQL文を実行可能な形に変えて、psにいれた。
-			 */
+
+			ps.setString(1, startDate);
+			ps.setString(2, endDate);
+
 			if (userId != null) {
-				ps.setInt(1, userId);
+				ps.setInt(3, userId);
 			}
 
 			ResultSet rs = ps.executeQuery();

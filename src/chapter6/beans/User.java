@@ -3,6 +3,9 @@ package chapter6.beans;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * usersテーブル登録更新用
+ */
 public class User implements Serializable {
 
     private int id;

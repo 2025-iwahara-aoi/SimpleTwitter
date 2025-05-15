@@ -11,8 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import chapter6.beans.User;
+import chapter6.beans.UserComment;
 import chapter6.beans.UserMessage;
 import chapter6.logging.InitApplication;
+import chapter6.service.CommentService;
 import chapter6.service.MessageService;
 
 @WebServlet(urlPatterns = { "/index.jsp" })
@@ -56,15 +58,22 @@ public class TopServlet extends HttpServlet {
 
 		String userId = request.getParameter("user_id");
 
-		List<UserMessage> messages = new MessageService().select(userId);
+		// 開始日と終了日のパラメータを取得（JSPから送信される）
+		String startDate = request.getParameter("startDate");
+		String endDate = request.getParameter("endDate");
+
+		List<UserMessage> messages = new MessageService().select(userId, startDate, endDate);
+		List<UserComment> comments = new CommentService().select(userId);
 		/*投稿一覧をデータベースから取り出すコード
 		MessageService()というクラスを使って、select()というメゾットで、すべての投稿を
 		取り出して、messagesというリストに入れる処理。*/
 
 		request.setAttribute("messages", messages);
 		//messagesという名前で投稿一覧を渡す処理。
-
+		request.setAttribute("comments", comments);
 		request.setAttribute("isShowMessageForm", isShowMessageForm);
+		request.setAttribute("startDate", startDate);
+		request.setAttribute("endDate", endDate);
 		request.getRequestDispatcher("/top.jsp").forward(request, response);
 		//("/top.jsp")をつかって画面に表示してと指示
 

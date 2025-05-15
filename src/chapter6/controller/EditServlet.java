@@ -109,6 +109,7 @@ public class EditServlet extends HttpServlet {
 					        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
 				 //空のユーザーの箱をuserに入れている
 				Message message = new Message();
+				//画面からとってきたmessageIdこの名前に入っているを値をint型に変えてmessage.setIdで受け取ってる
 				message.setId(Integer.parseInt(request.getParameter("messageId")));
 				message.setText(request.getParameter("text"));
 
