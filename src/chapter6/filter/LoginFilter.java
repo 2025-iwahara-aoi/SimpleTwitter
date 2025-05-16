@@ -36,7 +36,6 @@ public class LoginFilter implements Filter {
 			List<String> messages = new ArrayList<>();
 			messages.add("ログインしてください");
 			req.getSession().setAttribute("errorMessages", messages);
-
 			resp.sendRedirect("login");
 		}
 	}
