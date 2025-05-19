@@ -161,7 +161,7 @@ public class MessageService {
 			}else {
 				// 表示形式を指定
 				SimpleDateFormat sdf1
-				= new SimpleDateFormat("yyyy/MM/dd HH:mm:ss:SS");
+				= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS");
 				endDate = sdf1.format(nowDate);
 			}
 
