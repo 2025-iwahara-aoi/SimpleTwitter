@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
-
 import chapter6.beans.Comment;
 import chapter6.beans.UserComment;
 import chapter6.dao.CommentDao;
@@ -85,11 +83,8 @@ public class CommentService {
 			 * ServletからuserIdの値が渡ってきていたら
 			 * 整数型に型変換し、idに代入
 			 */
-			Integer id = null;
-			if (!StringUtils.isEmpty(userId)) {
-				id = Integer.parseInt(userId);
-			}
-			List<UserComment> comments = new UserCommentDao().select(connection, id, LIMIT_NUM);
+
+			List<UserComment> comments = new UserCommentDao().select(connection, LIMIT_NUM);
 			//UserMessageDaoクラスのselect()メソッドを呼んで、データベースから投稿一覧を取得している。
 
 			commit(connection); //今までの操作を確定保存している。

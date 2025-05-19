@@ -4,6 +4,8 @@ import static chapter6.utils.CloseableUtil.*;
 import static chapter6.utils.DBUtil.*;
 
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -135,6 +137,8 @@ public class MessageService {
 		final int LIMIT_NUM = 1000;
 		Connection connection = null; //データベースに接続するための線を宣言。
 										//まだつながっていない状態。
+		// 現在日時を取得
+		Date nowDate = new Date();
 		try {
 			connection = getConnection(); //データベースと接続
 			/*
@@ -155,7 +159,10 @@ public class MessageService {
 			if (!StringUtils.isBlank(endDate)) {
 				endDate = (endDate+ " 23:59:59");
 			}else {
-				endDate = "2026-01-01 23:59:59";
+				// 表示形式を指定
+				SimpleDateFormat sdf1
+				= new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
+				endDate = sdf1.format(nowDate);
 			}
 
 			List<UserMessage> messages = new UserMessageDao().select(connection, id, startDate, endDate, LIMIT_NUM);

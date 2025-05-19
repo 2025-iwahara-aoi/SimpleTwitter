@@ -32,7 +32,7 @@ public class UserCommentDao {
 
 	}
 
-	public List<UserComment> select(Connection connection, Integer userId, int num) {
+	public List<UserComment> select(Connection connection, int num) {
 
 		log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 		        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
@@ -53,16 +53,9 @@ public class UserCommentDao {
 			sql.append("FROM comments ");
 			sql.append("INNER JOIN users ");
 			sql.append("ON comments.user_id = users.id ");
-			if (userId != null) { //	userIdが渡されている時だけ
-				sql.append("WHERE comments.user_id = ? ");
-			}
 			sql.append("ORDER BY created_date DESC limit " + num);
 
 			ps = connection.prepareStatement(sql.toString());
-
-			if (userId != null) {
-				ps.setInt(1, userId);
-			}
 
 			ResultSet rs = ps.executeQuery();
 			List<UserComment> comments = toUserComments(rs);
