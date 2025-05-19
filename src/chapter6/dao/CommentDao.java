@@ -38,14 +38,12 @@ public class CommentDao {
 		try {
 			StringBuilder sql = new StringBuilder();
 			sql.append("INSERT INTO comments ( ");
-			//sql.append("    id, ");
 			sql.append("    user_id, ");
 			sql.append("    message_id, ");
 			sql.append("    text, ");
 			sql.append("    created_date, ");
 			sql.append("    updated_date ");
 			sql.append(") VALUES ( ");
-			//sql.append("    ?, ");//Id用
 			sql.append("    ?, "); // user_id
 			sql.append("    ?,   "); //messageId
 			sql.append("    ?, "); // text
@@ -54,8 +52,6 @@ public class CommentDao {
 			sql.append(")");
 
 			ps = connection.prepareStatement(sql.toString());
-
-			//ps.setInt(1, comment.getId());
 			ps.setInt(1, comment.getUserId());
 			ps.setInt(2, comment.getMessageId());
 			ps.setString(3, comment.getText());
