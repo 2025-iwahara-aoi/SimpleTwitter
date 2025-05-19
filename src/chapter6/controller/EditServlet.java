@@ -107,7 +107,7 @@ public class EditServlet extends HttpServlet {
 
 				 log.info(new Object(){}.getClass().getEnclosingClass().getName() +
 					        " : " + new Object(){}.getClass().getEnclosingMethod().getName());
-				 //空のメッセージの箱をMessageに入れている
+				 //メッセージインスタンスを生成
 				Message message = new Message();
 				//うけとった値をmessageインスタンスに格納している。
 				message.setId(Integer.parseInt(request.getParameter("messageId")));
